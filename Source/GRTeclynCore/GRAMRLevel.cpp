@@ -9,6 +9,7 @@
 void GRAMRLevel::stateVariableSetUp()
 {
     const int nghost = simParams().num_ghosts;
+
     desc_lst.addDescriptor(State_Type, amrex::IndexType::TheCellType(),
                            amrex::StateDescriptor::Point, nghost, NUM_VARS,
                            &amrex::cell_quartic_interp);
