@@ -163,6 +163,7 @@ template <int num_components>
 void ParticleInterpolators<num_components>::populate_from_query(
     const InterpolationQueryParticle &query)
 {
+    BL_PROFILE("ParticleInterpolators::populate_from_query()");
     amrex::Print() << "In populate \n";
 
     AMREX_ASSERT(m_initialized);
@@ -279,6 +280,7 @@ void ParticleInterpolators<num_components>::populate_from_query(
 template <int num_components>
 void ParticleInterpolators<num_components>::interpolate_to_particle()
 {
+    BL_PROFILE("ParticleInterpolators::interpolate_to_particle()");
     AMREX_ASSERT(m_initialized);
 
     ensure_redistributed();
@@ -352,6 +354,8 @@ void ParticleInterpolators<num_components>::
     interpolate_to_particle_from_derived_fields(
         const std::vector<const amrex::MultiFab *> &fields_by_lev)
 {
+    BL_PROFILE(
+        "ParticleInterpolators::interpolate_to_particle_from_derived_fields()");
     AMREX_ASSERT(m_initialized);
 
     const int nlevs = m_gr_amr->finestLevel() + 1;
@@ -453,6 +457,7 @@ template <int num_components>
 void ParticleInterpolators<num_components>::interp(
     InterpolationQueryParticle &query, VariableType variable_type)
 {
+    BL_PROFILE("ParticleInterpolators::interp()");
     AMREX_ASSERT(m_initialized);
 
     // if (variable_type == VariableType::derived ||
@@ -647,6 +652,7 @@ void ParticleInterpolators<num_components>::check_domain(
 template <int num_components>
 void ParticleInterpolators<num_components>::ensure_redistributed()
 {
+    BL_PROFILE("ParticleInterpolators::ensure_redistributed()");
     int need = (m_need_redistribute ? 1 : 0);
     amrex::ParallelDescriptor::ReduceIntMax(
         need); // do we want all ranks to redistribute particles, if one rank

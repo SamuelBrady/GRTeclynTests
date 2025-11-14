@@ -324,6 +324,7 @@ void BinaryBHLevel::specific_post_checkpoint(const std::string &a_chk_dir,
 
 void BinaryBHLevel::specificPostTimeStep()
 {
+    BL_PROFILE("BinaryBHLevel::specificPostTimeStep()");
     // std::cout << "BinaryBHLevel::specificPostTimeStep() on level " << Level()
     //           << std::endl;
     bool first_step = (parent->levelSteps(0) == 0);
