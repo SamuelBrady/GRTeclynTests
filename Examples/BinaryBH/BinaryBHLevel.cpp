@@ -396,20 +396,21 @@ void BinaryBHLevel::specificPostTimeStep()
     // }
 
     // Custom extraction
-    if (Level() == 3)
+    if (Level() == 5)
     {
         // set up the query and execute it
-        std::array<double, AMREX_SPACEDIM> extraction_origin = {
-            simParams().L / 2, simParams().L / 2,
-            simParams().L / 2 - 1.}; // amend appropriately depending on whether
-                                     // you used symmetric BCs or something else
+        std::array<double, AMREX_SPACEDIM> extraction_origin =
+            simParams().center;
+
+        extraction_origin[2] += 1.0;
+        extraction_origin[0] -= 0.125 * simParams().L;
 
         double m_time       = get_state_data(State_Type).curTime();
         double m_dt         = get_gramr_ptr()->dtLevel(Level());
         double restart_time = get_gramr_ptr()->get_restart_time();
 
         // a random chi lineout
-        CustomExtraction chi_extraction(c_chi, 1, 15, simParams().L / 4.,
+        CustomExtraction chi_extraction(c_chi, 1, 4096, simParams().L / 4.,
                                         extraction_origin, m_dt, m_time,
                                         restart_time, first_step);
         chi_extraction.execute_query(*get_bhamr_ptr()->m_weyl_interpolator,
