@@ -32,8 +32,10 @@ template <int num_punctures> class BHAMR : public GRAMR
 
   public:
 
-    ParticleInterpolators<1> *m_weyl_interpolator =
-        nullptr; // weyl interpolator (used as chi interpolator in this example)
+    ParticleInterpolators<2> *m_weyl_interpolator =
+        nullptr; // weyl interpolator (will be used interchangeably with chi
+                 // interpolator in this example; would need to just emend the
+                 // template number N)
 
     BHAMR(amrex::LevelBld *a_levelbld) : GRAMR(a_levelbld)
     {
@@ -53,7 +55,7 @@ template <int num_punctures> class BHAMR : public GRAMR
     }
 
     // set weyl interpolator
-    void set_interpolator(ParticleInterpolators<1> *a_interpolator)
+    void set_interpolator(ParticleInterpolators<2> *a_interpolator)
     {
         AMREX_ASSERT(a_interpolator != nullptr);
 
@@ -66,7 +68,6 @@ template <int num_punctures> class BHAMR : public GRAMR
     {
         if (m_query != &q)
         { // only if the query object changed
-            amrex::Print() << "Query object changed \n";
             m_query           = &q;
             m_query_populated = false;
         }
@@ -78,7 +79,6 @@ template <int num_punctures> class BHAMR : public GRAMR
         AMREX_ASSERT(m_query);
         if (!m_query_populated)
         {
-            amrex::Print() << "Query being populated \n";
             m_weyl_interpolator->populate_from_query(*m_query);
             m_query_populated = true;
         }
