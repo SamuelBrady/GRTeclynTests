@@ -256,7 +256,7 @@ void ParticleInterpolators<num_components>::populate_from_query(
         amrex::Gpu::streamSynchronize();
     }
 
-    // amrex::ParallelDescriptor::Barrier(); // TODO! test if this makes a
+    //amrex::ParallelDescriptor::Barrier(); // TODO! test if this makes a
     // difference.
 }
 
@@ -426,8 +426,13 @@ void ParticleInterpolators<num_components>::interp(
     // }
 
     // get total query points here
-    const int npts = static_cast<int>(query.numPoints());
-
+    int npts = 0;
+    if (amrex::ParallelDescriptor::IOProcessor()) {
+    	npts = static_cast<int>(query.numPoints());  // only rank 0 touches query
+     }
+    // broadcast
+    amrex::ParallelDescriptor::Bcast(&npts, 1, amrex::ParallelDescriptor::IOProcessorNumber());
+ 
     // value_at_point[k][ip], where k in [0..num_components-1]
     std::vector<std::vector<amrex::Real>> value_at_point(
         num_components, std::vector<amrex::Real>(npts, 0.0));
@@ -463,15 +468,25 @@ void ParticleInterpolators<num_components>::interp(
                 amrex::Gpu::copyAsync(amrex::Gpu::deviceToHost, dptr, dptr + np,
                                       hr[k].begin());
             }
-            amrex::Gpu::streamSynchronize();
+	    amrex::Gpu::streamSynchronize();
 
+	    amrex::AllPrint() << "I should have total number of points = " << np << "\n";
             for (int i = 0; i < np; ++i)
             {
-                const int pid = hp[i].id();
-                const int q   = static_cast<int>(pid) - 1; // get particle index
-                if (q < 0 || q >= npts)
+                const int q   = hp[i].idata(0); // get particle index
+                
+		if (q < 0 || q >= npts)
                 {
-                    amrex::Abort("interp(): particle id out of range");
+		   amrex::AllPrint() << "interp(): out-of-range on rank "
+                       << amrex::ParallelDescriptor::MyProc()
+                       << " lev " << lev
+                       << " local i " << i
+                       << " q " << q
+                       << " npts " << npts
+                       << " id " << hp[i].id()
+                       << "\n";
+
+		   amrex::Abort("interp(): particle id out of range");
                 }
                 for (int k = 0; k < num_components; ++k)
                 {

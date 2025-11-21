@@ -329,7 +329,7 @@ void BinaryBHLevel::specificPostTimeStep()
     bool first_step = (parent->levelSteps(0) == 0);
 
     // Weyl extraction
-    if (Level() == 1)
+    if (Level() == 2)
     {
         int ngrow           = 2;
         int finest          = get_gramr_ptr()->finestLevel();
