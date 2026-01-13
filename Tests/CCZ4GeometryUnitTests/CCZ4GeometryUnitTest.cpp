@@ -37,6 +37,7 @@ compute_ccz4_test_geometry(const amrex::Array4<amrex::Real> &a_array,
     CCZ4D1Vars d1;
     CCZ4D2Vars d2;
     Tensor<1, amrex::Real> Z_over_chi;
+    std::cout << "Coordinates for Geom test are: " << a_iv[0] << " " << a_iv[1] << " " << a_iv[2] << std::endl;
 
 // Including the auto generated file with values
 #include "CCZ4GeometryMathematicaValues.hpp"
@@ -123,12 +124,14 @@ void run_ccz4_geometry_unit_tests()
 
         int vars_counter = 0;
         // Compare
+	std::cout << "Outputting vars: ";
         FOR (i, j)
         {
             INFO("h_UU[" << i << "][" << j << "]");
             CHECK(geometry_array(iv_zeros, vars_counter) ==
                   doctest::Approx(h_UU_known[i][j]).epsilon(test_threshold));
             ++vars_counter;
+	    std::cout << vars_counter << " - " << geometry_array(iv_zeros, vars_counter) << ", "; 
         }
 
         FOR (i, j, k)
@@ -138,6 +141,7 @@ void run_ccz4_geometry_unit_tests()
                 geometry_array(iv_zeros, vars_counter) ==
                 doctest::Approx(chris_known[i][j][k]).epsilon(test_threshold));
             ++vars_counter;
+	    std::cout << vars_counter << " - " << geometry_array(iv_zeros, vars_counter) << ", ";
         }
 
         FOR (i)
@@ -147,6 +151,7 @@ void run_ccz4_geometry_unit_tests()
                   doctest::Approx(chris_contracted_known[i])
                       .epsilon(test_threshold));
             ++vars_counter;
+	    std::cout << vars_counter << " - " << geometry_array(iv_zeros, vars_counter) << ", ";
         }
 
         FOR (i, j)
@@ -155,10 +160,12 @@ void run_ccz4_geometry_unit_tests()
             CHECK(geometry_array(iv_zeros, vars_counter) ==
                   doctest::Approx(ricciZ_known[i][j]).epsilon(test_threshold));
             ++vars_counter;
+	    std::cout << vars_counter << " - " << geometry_array(iv_zeros, vars_counter) << ", ";
         }
 
         CHECK(geometry_array(iv_zeros, vars_counter) ==
               doctest::Approx(ricciZ_scalar_known).epsilon(test_threshold));
+	std::cout << vars_counter << " - " << geometry_array(iv_zeros, vars_counter) << std::endl;
         ++vars_counter;
     }
     amrex::Finalize();

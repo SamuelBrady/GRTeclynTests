@@ -133,3 +133,30 @@ jobs:
     - name: Run tests
       working-directory: ${{ env.TESTS_DIR }}
       run: make run ${{ env.BUILD_CONFIG }}
+
+    - name: Output file tree
+      if: always()
+      run: |
+        ls GRTeclyn
+        ls GRTeclyn/Tests
+
+    - name: Archive backtrace file here
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Backtrace
+        path: GRTeclyn/Tests/Backtrace.1.0
+
+    - name: Archive backtrace file here 2
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Backtrace
+        path: GRTeclyn/Tests/Backtrace.1
+
+    - name: Archive backtrace file here 3
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Backtrace
+        path: GRTeclyn/Tests/Backtrace.*
